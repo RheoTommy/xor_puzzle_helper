@@ -5376,7 +5376,7 @@ var $elm$core$Array$set = F3(
 			A4($elm$core$Array$setHelp, startShift, index, value, tree),
 			tail));
 	});
-var $author$project$Main$flipGrid = F2(
+var $author$project$Main$flipGridPos = F2(
 	function (grid, pos) {
 		var value = A2($author$project$Main$getGrid, grid, pos);
 		var changed = A2(
@@ -5394,7 +5394,7 @@ var $elm$core$Basics$negate = function (n) {
 var $author$project$Main$flip = F2(
 	function (model, pos) {
 		if (model.isSingleFlipMode) {
-			return A2($author$project$Main$flipGrid, model.grid, pos);
+			return A2($author$project$Main$flipGridPos, model.grid, pos);
 		} else {
 			if (!A2($author$project$Main$getGrid, model.grid, pos)) {
 				return model.grid;
@@ -5410,7 +5410,7 @@ var $author$project$Main$flip = F2(
 							var j = pos.j + dj;
 							var i = pos.i + di;
 							return ((0 <= i) && ((_Utils_cmp(i, model.h) < 0) && ((0 <= j) && (_Utils_cmp(j, model.w) < 0)))) ? A2(
-								$author$project$Main$flipGrid,
+								$author$project$Main$flipGridPos,
 								grid,
 								A2($author$project$Main$Position, i, j)) : grid;
 						}),
@@ -5468,6 +5468,7 @@ var $author$project$Main$UpdateRange = F2(
 	});
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$Main$gridSize = 75;
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -5631,11 +5632,13 @@ var $author$project$Main$viewOneGrid = F2(
 			_List_fromArray(
 				[
 					$elm$svg$Svg$Attributes$x(
-					$elm$core$String$fromInt(50 * pos.j)),
+					$elm$core$String$fromInt($author$project$Main$gridSize * pos.j)),
 					$elm$svg$Svg$Attributes$y(
-					$elm$core$String$fromInt(50 * pos.i)),
-					$elm$svg$Svg$Attributes$width('50'),
-					$elm$svg$Svg$Attributes$height('50'),
+					$elm$core$String$fromInt($author$project$Main$gridSize * pos.i)),
+					$elm$svg$Svg$Attributes$width(
+					$elm$core$String$fromInt($author$project$Main$gridSize)),
+					$elm$svg$Svg$Attributes$height(
+					$elm$core$String$fromInt($author$project$Main$gridSize)),
 					A2($elm$html$Html$Attributes$style, 'stroke', 'gray'),
 					$mpizenberg$elm_pointer_events$Html$Events$Extra$Touch$onStart(
 					function (_v0) {
@@ -5841,11 +5844,11 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$svg$Svg$Attributes$width(
-								$elm$core$String$fromInt(50 * model.w)),
+								$elm$core$String$fromInt($author$project$Main$gridSize * model.w)),
 								$elm$svg$Svg$Attributes$height(
-								$elm$core$String$fromInt(50 * model.h)),
+								$elm$core$String$fromInt($author$project$Main$gridSize * model.h)),
 								$elm$svg$Svg$Attributes$viewBox(
-								'0 0 ' + ($elm$core$String$fromInt(50 * model.w) + (' ' + $elm$core$String$fromInt(50 * model.h))))
+								'0 0 ' + ($elm$core$String$fromInt($author$project$Main$gridSize * model.w) + (' ' + $elm$core$String$fromInt($author$project$Main$gridSize * model.h))))
 							]),
 						$author$project$Main$viewGrid(model))
 					]))
