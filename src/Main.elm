@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), Position, flip, flipGrid, getGrid, init, main, subscriptions, update, view, viewGrid, viewInput, viewOneGrid)
+module Main exposing (Model, Msg(..), Position, flip, flipGridPos, getGrid, init, main, subscriptions, update, view, viewGrid, viewInput, viewOneGrid)
 
 import Array as A exposing (Array)
 import Browser as B
@@ -124,13 +124,24 @@ view model =
             , HA.style "justify-content" "space-evenly"
             ]
             [ S.svg
-                [ SA.width <| String.fromInt <| 50 * model.w
-                , SA.height <| String.fromInt <| 50 * model.h
-                , SA.viewBox <| "0 0 " ++ String.fromInt (50 * model.w) ++ " " ++ String.fromInt (50 * model.h)
+                [ SA.width <| String.fromInt <| gridSize * model.w
+                , SA.height <| String.fromInt <| gridSize * model.h
+                , SA.viewBox <| "0 0 " ++ String.fromInt (gridSize * model.w) ++ " " ++ String.fromInt (gridSize * model.h)
                 ]
                 (viewGrid model)
             ]
         ]
+
+
+viewInput : String -> String -> (String -> Msg) -> H.Html Msg
+viewInput p v f =
+    H.input
+        [ HA.type_ "number"
+        , HA.placeholder p
+        , HA.value v
+        , HE.onInput f
+        ]
+        []
 
 
 viewGrid : Model -> List (H.Html Msg)
@@ -144,10 +155,10 @@ viewGrid model =
 viewOneGrid : Model -> Position -> H.Html Msg
 viewOneGrid model pos =
     S.rect
-        [ SA.x <| String.fromInt <| 50 * pos.j
-        , SA.y <| String.fromInt <| 50 * pos.i
-        , SA.width "50"
-        , SA.height "50"
+        [ SA.x <| String.fromInt <| gridSize * pos.j
+        , SA.y <| String.fromInt <| gridSize * pos.i
+        , SA.width <| String.fromInt gridSize
+        , SA.height <| String.fromInt gridSize
         , HA.style "stroke" "gray"
         , T.onStart (\_ -> Flip pos)
         , HE.onClick (Flip pos)
@@ -167,20 +178,10 @@ viewOneGrid model pos =
         []
 
 
-viewInput : String -> String -> (String -> Msg) -> H.Html Msg
-viewInput p v f =
-    H.input
-        [ HA.type_ "number"
-        , HA.placeholder p
-        , HA.value v
-        , HE.onInput f
-        ]
-        []
-
-
+flip : Model -> Position -> A.Array (A.Array Bool)
 flip model pos =
     if model.isSingleFlipMode then
-        flipGrid model.grid pos
+        flipGridPos model.grid pos
 
     else if not (getGrid model.grid pos) then
         model.grid
@@ -201,7 +202,7 @@ flip model pos =
                             pos.j + dj
                     in
                     if 0 <= i && i < model.h && 0 <= j && j < model.w then
-                        flipGrid grid (Position i j)
+                        flipGridPos grid (Position i j)
 
                     else
                         grid
@@ -209,8 +210,8 @@ flip model pos =
                 model.grid
 
 
-flipGrid : A.Array (A.Array Bool) -> Position -> A.Array (A.Array Bool)
-flipGrid grid pos =
+flipGridPos : A.Array (A.Array Bool) -> Position -> A.Array (A.Array Bool)
+flipGridPos grid pos =
     let
         value =
             getGrid grid pos
@@ -223,6 +224,7 @@ flipGrid grid pos =
     A.set pos.i changed grid
 
 
+getGrid : Array (Array Bool) -> Position -> Bool
 getGrid grid pos =
     grid
         |> A.get pos.i
