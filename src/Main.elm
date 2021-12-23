@@ -1,0 +1,230 @@
+module Main exposing (Model, Msg(..), Position, flip, flipGrid, getGrid, init, main, subscriptions, update, view, viewGrid, viewInput, viewOneGrid)
+
+import Array as A exposing (Array)
+import Browser as B
+import Html as H
+import Html.Attributes as HA
+import Html.Events as HE
+import Html.Events.Extra.Touch as T
+import Svg as S
+import Svg.Attributes as SA
+
+
+main : Program () Model Msg
+main =
+    B.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
+type alias Model =
+    { h : Int
+    , w : Int
+    , isSingleFlipMode : Bool
+    , grid : A.Array (A.Array Bool)
+    }
+
+
+type Msg
+    = UpdateRange Int Int
+    | ChangeMode
+    | Flip Position
+
+
+type alias Position =
+    { i : Int
+    , j : Int
+    }
+
+
+gridSize : Int
+gridSize =
+    75
+
+
+makeFalseGrid : Int -> Int -> Array (A.Array Bool)
+makeFalseGrid h w =
+    False |> A.repeat w |> A.repeat h
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Model 3 3 False (makeFalseGrid 3 3)
+    , Cmd.none
+    )
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        UpdateRange h w ->
+            ( { model | h = h, w = w, grid = makeFalseGrid h w }
+            , Cmd.none
+            )
+
+        ChangeMode ->
+            ( { model | isSingleFlipMode = not model.isSingleFlipMode }
+            , Cmd.none
+            )
+
+        Flip pos ->
+            ( { model | grid = flip model pos }
+            , Cmd.none
+            )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
+view : Model -> H.Html Msg
+view model =
+    let
+        buttonText : String
+        buttonText =
+            if model.isSingleFlipMode then
+                "Normal Mode"
+
+            else
+                "Single Flip Mode"
+    in
+    H.div
+        [ HA.style "display" "flex"
+        , HA.style "align-items" "center"
+        , HA.style "justify-content" "center"
+        , HA.style "frex-direction" "column"
+        , HA.style "flex-wrap" "wrap"
+        ]
+        [ H.div
+            [ HA.style "display" "inline-flex"
+            , HA.style "width" "75%"
+            , HA.style "height" "50px"
+            , HA.style "align-items" "center"
+            , HA.style "justify-content" "space-evenly"
+            ]
+            [ H.div []
+                [ H.text "height:"
+                , viewInput "height" (String.fromInt model.h) (\h -> UpdateRange (Basics.max 0 <| Maybe.withDefault 0 <| String.toInt h) model.w)
+                ]
+            , H.div []
+                [ H.text "width:"
+                , viewInput "width" (String.fromInt model.w) (\w -> UpdateRange model.h (Basics.max 0 <| Maybe.withDefault 0 <| String.toInt w))
+                ]
+            , H.button [ HE.onClick ChangeMode ] [ H.text buttonText ]
+            ]
+        , H.div [ HA.style "width" "100%" ] []
+        , H.div
+            [ HA.style "display" "flex"
+            , HA.style "width" "100%"
+            , HA.style "align-items" "center"
+            , HA.style "justify-content" "space-evenly"
+            ]
+            [ S.svg
+                [ SA.width <| String.fromInt <| 50 * model.w
+                , SA.height <| String.fromInt <| 50 * model.h
+                , SA.viewBox <| "0 0 " ++ String.fromInt (50 * model.w) ++ " " ++ String.fromInt (50 * model.h)
+                ]
+                (viewGrid model)
+            ]
+        ]
+
+
+viewGrid : Model -> List (H.Html Msg)
+viewGrid model =
+    List.range 0 (model.h - 1)
+        |> List.map (\i -> List.map (\j -> Position i j) (List.range 0 (model.w - 1)))
+        |> List.concat
+        |> List.map (\pos -> viewOneGrid model pos)
+
+
+viewOneGrid : Model -> Position -> H.Html Msg
+viewOneGrid model pos =
+    S.rect
+        [ SA.x <| String.fromInt <| 50 * pos.j
+        , SA.y <| String.fromInt <| 50 * pos.i
+        , SA.width "50"
+        , SA.height "50"
+        , HA.style "stroke" "gray"
+        , T.onStart (\_ -> Flip pos)
+        , HE.onClick (Flip pos)
+        , model.grid
+            |> A.get pos.i
+            |> Maybe.andThen (A.get pos.j)
+            |> Maybe.withDefault False
+            |> (\value ->
+                    if value then
+                        "Black"
+
+                    else
+                        "White"
+               )
+            |> HA.style "fill"
+        ]
+        []
+
+
+viewInput : String -> String -> (String -> Msg) -> H.Html Msg
+viewInput p v f =
+    H.input
+        [ HA.type_ "number"
+        , HA.placeholder p
+        , HA.value v
+        , HE.onInput f
+        ]
+        []
+
+
+flip model pos =
+    if model.isSingleFlipMode then
+        flipGrid model.grid pos
+
+    else if not (getGrid model.grid pos) then
+        model.grid
+
+    else
+        let
+            d =
+                [ -1, 0, 1 ]
+        in
+        List.concatMap (\di -> List.map (\dj -> ( di, dj )) d) d
+            |> List.foldl
+                (\( di, dj ) grid ->
+                    let
+                        i =
+                            pos.i + di
+
+                        j =
+                            pos.j + dj
+                    in
+                    if 0 <= i && i < model.h && 0 <= j && j < model.w then
+                        flipGrid grid (Position i j)
+
+                    else
+                        grid
+                )
+                model.grid
+
+
+flipGrid : A.Array (A.Array Bool) -> Position -> A.Array (A.Array Bool)
+flipGrid grid pos =
+    let
+        value =
+            getGrid grid pos
+
+        changed =
+            A.get pos.i grid
+                |> Maybe.map (A.set pos.j (not value))
+                |> Maybe.withDefault A.empty
+    in
+    A.set pos.i changed grid
+
+
+getGrid grid pos =
+    grid
+        |> A.get pos.i
+        |> Maybe.andThen (A.get pos.j)
+        |> Maybe.withDefault False
