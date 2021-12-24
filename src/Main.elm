@@ -163,6 +163,7 @@ viewOneGrid model pos =
         , SA.width <| String.fromInt gridSize
         , SA.height <| String.fromInt gridSize
         , HA.style "stroke" "gray"
+        , HA.style "stroke-width" "3"
         , T.onStart (\_ -> Flip pos)
         , HE.onClick (Flip pos)
         , model.grid
