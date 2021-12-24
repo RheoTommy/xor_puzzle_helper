@@ -92,17 +92,11 @@ view model =
             else
                 "Single Flip Mode"
     in
-    H.div
-        [ HA.style "display" "flex"
-        , HA.style "align-items" "center"
-        , HA.style "justify-content" "center"
-        , HA.style "frex-direction" "column"
-        , HA.style "flex-wrap" "wrap"
-        ]
+    H.div [ HA.style "height" "100vh" ]
         [ H.div
             [ HA.style "display" "inline-flex"
-            , HA.style "width" "75%"
-            , HA.style "height" "50px"
+            , HA.style "width" "100vw"
+            , HA.style "height" "10vh"
             , HA.style "align-items" "center"
             , HA.style "justify-content" "space-evenly"
             ]
@@ -116,19 +110,28 @@ view model =
                 ]
             , H.button [ HE.onClick ChangeMode ] [ H.text buttonText ]
             ]
-        , H.div [ HA.style "width" "100%" ] []
         , H.div
             [ HA.style "display" "flex"
-            , HA.style "width" "100%"
             , HA.style "align-items" "center"
-            , HA.style "justify-content" "space-evenly"
+            , HA.style "justify-content" "center"
+            , HA.style "frex-direction" "column"
+            , HA.style "flex-wrap" "wrap"
+            , HA.style "height" "100%"
             ]
-            [ S.svg
-                [ SA.width <| String.fromInt <| gridSize * model.w
-                , SA.height <| String.fromInt <| gridSize * model.h
-                , SA.viewBox <| "0 0 " ++ String.fromInt (gridSize * model.w) ++ " " ++ String.fromInt (gridSize * model.h)
+            [ H.div
+                [ HA.style "display" "flex"
+                , HA.style "width" "100%"
+                , HA.style "align-items" "center"
+                , HA.style "justify-content" "space-evenly"
+                , HA.style "margin" "0"
                 ]
-                (viewGrid model)
+                [ S.svg
+                    [ SA.width <| String.fromInt <| gridSize * model.w
+                    , SA.height <| String.fromInt <| gridSize * model.h
+                    , SA.viewBox <| "0 0 " ++ String.fromInt (gridSize * model.w) ++ " " ++ String.fromInt (gridSize * model.h)
+                    ]
+                    (viewGrid model)
+                ]
             ]
         ]
 

@@ -5744,11 +5744,7 @@ var $author$project$Main$view = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-				A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-				A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-				A2($elm$html$Html$Attributes$style, 'frex-direction', 'column'),
-				A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap')
+				A2($elm$html$Html$Attributes$style, 'height', '100vh')
 			]),
 		_List_fromArray(
 			[
@@ -5757,8 +5753,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A2($elm$html$Html$Attributes$style, 'display', 'inline-flex'),
-						A2($elm$html$Html$Attributes$style, 'width', '75%'),
-						A2($elm$html$Html$Attributes$style, 'height', '50px'),
+						A2($elm$html$Html$Attributes$style, 'width', '100vw'),
+						A2($elm$html$Html$Attributes$style, 'height', '10vh'),
 						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
 						A2($elm$html$Html$Attributes$style, 'justify-content', 'space-evenly')
 					]),
@@ -5825,32 +5821,40 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'width', '100%')
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
 						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
 						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'space-evenly')
+						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+						A2($elm$html$Html$Attributes$style, 'frex-direction', 'column'),
+						A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
+						A2($elm$html$Html$Attributes$style, 'height', '100%')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$svg$Svg$svg,
+						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$svg$Svg$Attributes$width(
-								$elm$core$String$fromInt($author$project$Main$gridSize * model.w)),
-								$elm$svg$Svg$Attributes$height(
-								$elm$core$String$fromInt($author$project$Main$gridSize * model.h)),
-								$elm$svg$Svg$Attributes$viewBox(
-								'0 0 ' + ($elm$core$String$fromInt($author$project$Main$gridSize * model.w) + (' ' + $elm$core$String$fromInt($author$project$Main$gridSize * model.h))))
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-evenly'),
+								A2($elm$html$Html$Attributes$style, 'margin', '0')
 							]),
-						$author$project$Main$viewGrid(model))
+						_List_fromArray(
+							[
+								A2(
+								$elm$svg$Svg$svg,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$width(
+										$elm$core$String$fromInt($author$project$Main$gridSize * model.w)),
+										$elm$svg$Svg$Attributes$height(
+										$elm$core$String$fromInt($author$project$Main$gridSize * model.h)),
+										$elm$svg$Svg$Attributes$viewBox(
+										'0 0 ' + ($elm$core$String$fromInt($author$project$Main$gridSize * model.w) + (' ' + $elm$core$String$fromInt($author$project$Main$gridSize * model.h))))
+									]),
+								$author$project$Main$viewGrid(model))
+							]))
 					]))
 			]));
 };
